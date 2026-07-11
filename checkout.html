@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Verba Local Studio</title>
+<meta name="description" content="Checkout sicuro Stripe per i pacchetti Verba Local Studio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;1,9..144,450;1,9..144,600&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F0E4;
+  --paper-dim:#ECE4D0;
+  --paper-line:#D9CEAF;
+  --ink:#1C2032;
+  --ink-soft:#5B5A4E;
+  --red:#B23B26;
+  --red-dark:#8F2F1F;
+  --red-dim:#D9C3B3;
+  --teal:#2C6660;
+  --teal-tint:#DCE6DE;
+  --white:#FFFDF8;
+  --radius:2px;
+  --shadow:0 18px 50px rgba(28,32,50,.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Instrument Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+h1,h2,h3{font-family:'Fraunces', Georgia, serif;font-weight:450;letter-spacing:-.02em;margin:0}
+p{margin:0}
+main{overflow:hidden}
+.site-header{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:16px 6vw;
+  background:rgba(245,240,228,.94);
+  border-bottom:1px solid var(--paper-line);
+  backdrop-filter:blur(8px);
+}
+.brand{font-family:'Fraunces', Georgia, serif;font-weight:600;font-size:1.15rem;text-decoration:none;white-space:nowrap}
+.brand em{color:var(--red);font-style:italic;font-weight:450}
+.site-header nav{display:flex;gap:24px;align-items:center}
+.site-header nav a{text-decoration:none;color:var(--ink-soft);font-size:.94rem;transition:.15s;color:var(--ink-soft)}
+.site-header nav a:hover{color:var(--ink)}
+.button{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:11px 20px;
+  border:1px solid transparent;border-radius:var(--radius);
+  font-weight:600;text-decoration:none;cursor:pointer;
+  transition:transform .16s ease, box-shadow .16s ease, background .16s ease, color .16s ease, border-color .16s ease;
+  font-family:inherit;font-size:.95rem;
+}
+.button:hover{transform:translateY(-1px)}
+.button-primary{background:var(--red);color:var(--paper)}
+.button-primary:hover{background:var(--red-dark);box-shadow:0 6px 20px rgba(178,59,38,.25)}
+.button-outline{border-color:var(--ink);color:var(--ink);background:transparent}
+.button-outline:hover{background:var(--ink);color:var(--paper)}
+.button-light{border-color:var(--paper);color:var(--paper);background:transparent}
+.button[aria-disabled="true"], .button.disabled{opacity:.55;pointer-events:none;filter:grayscale(.3)}
+.lang-switch{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);
+  z-index:80;display:flex;flex-direction:column;gap:6px;
+  background:rgba(245,240,228,.96);border:1px solid var(--ink);padding:6px;box-shadow:0 10px 30px rgba(28,32,50,.12);
+}
+.lang-switch button{
+  width:40px;padding:8px 0;border:0;background:transparent;color:var(--ink-soft);cursor:pointer;
+  font-family:'IBM Plex Mono', monospace;font-size:.72rem;letter-spacing:.06em;
+  transition:background .15s,color .15s;
+}
+.lang-switch button:hover{background:var(--teal-tint);color:var(--ink)}
+.lang-switch button.active{background:var(--red);color:var(--paper)}
+.hero{
+  position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(330px,.62fr);gap:48px;align-items:center;
+  padding:96px 6vw 76px;border-bottom:1px solid var(--paper-line);
+}
+.hero-glyphs{
+  position:absolute;top:-48px;right:-30px;z-index:0;pointer-events:none;
+  font-family:'Fraunces', Georgia, serif;font-style:italic;font-size:min(35vw,380px);line-height:1;color:var(--paper-dim);
+}
+.hero-copy,.rewrite-card{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;
+  font-family:'IBM Plex Mono', monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.76rem;color:var(--teal);
+}
+.eyebrow::before{content:'●';font-size:.6rem;color:currentColor}.eyebrow.light{color:#8fc9c1}
+.hero h1{font-size:clamp(2.15rem,5.1vw,4.35rem);line-height:.98;max-width:12ch;margin-bottom:22px}.hero h1 em{color:var(--red);font-style:italic}
+.lead{font-size:1.14rem;color:var(--ink-soft);max-width:52ch;margin-bottom:34px}.hero-actions{display:flex;flex-wrap:wrap;gap:14px}
+.rewrite-card{
+  width:100%;background:var(--paper);border:1px solid var(--ink);padding:0;text-align:left;color:var(--ink);box-shadow:var(--shadow);cursor:pointer;
+}
+.rewrite-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px;border-bottom:1px solid var(--ink);font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+.rewrite-bar span:last-child{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}.rewrite-bar i{width:6px;height:6px;border-radius:50%;background:var(--teal);display:inline-block}
+.rewrite-body{padding:26px}.micro-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:8px}.original{color:var(--ink-soft);text-decoration:line-through solid var(--red) 1.5px;margin-bottom:20px}.localized{font-family:'Fraunces',Georgia,serif;font-size:1.34rem;line-height:1.25;margin-bottom:14px;min-height:3.3em}.keyword-note{display:inline-block;background:var(--teal-tint);color:var(--teal);font-family:'IBM Plex Mono',monospace;font-size:.72rem;padding:5px 9px}.card-hint{display:block;border-top:1px solid var(--paper-line);padding:10px 16px;color:var(--ink-soft);font-size:.85rem}
+.proof-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--paper-line)}.proof{padding:28px 6vw 28px 28px;border-right:1px solid var(--paper-line)}.proof:first-child{padding-left:6vw}.proof strong{display:block;font-family:'Fraunces',Georgia,serif;font-size:2.1rem;font-weight:450}.proof span{display:block;color:var(--ink-soft);font-size:.92rem;max-width:18ch}
+.content-section{padding:82px 6vw;border-bottom:1px solid var(--paper-line)}.section-intro{max-width:720px;margin-bottom:48px}.section-intro.compact{max-width:790px}.section-intro h2{font-size:clamp(1.75rem,3.5vw,2.55rem);line-height:1.08}.section-intro p{color:var(--ink-soft);font-size:1.05rem;margin-top:14px;max-width:62ch}
+.steps{border-top:1px solid var(--ink)}.step{display:grid;grid-template-columns:100px 1fr;gap:24px;padding:30px 0;border-bottom:1px solid var(--paper-line)}.step-number{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:2.4rem;color:var(--red-dim);line-height:1}.step h3{font-size:1.2rem;margin-bottom:8px}.step p{color:var(--ink-soft);max-width:56ch}.step-time{display:inline-block;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--teal)}
+.comparison-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ink);border:1px solid var(--ink)}.comparison-grid article{background:var(--paper);padding:30px 28px}.comparison-grid .comparison-featured{background:var(--ink);color:var(--paper)}.comparison-grid span{font-family:'IBM Plex Mono',monospace;color:var(--red);font-size:.74rem}.comparison-grid .comparison-featured span{color:#8fc9c1}.comparison-grid h3{font-size:1.25rem;margin:14px 0 9px}.comparison-grid p{color:var(--ink-soft)}.comparison-grid .comparison-featured p{color:#C9C6B8}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ink);border:1px solid var(--ink)}.plan{background:var(--paper);padding:32px 28px;display:flex;flex-direction:column}.plan.featured{background:var(--ink);color:var(--paper)}.plan-label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:14px}.featured .plan-label{color:#8fc9c1}.plan h3{font-size:1.3rem;margin-bottom:9px}.plan p{color:var(--ink-soft);font-size:.95rem}.featured p{color:#C9C6B8}.price{font-family:'Fraunces',Georgia,serif;font-size:2.2rem;margin:20px 0 12px}.price small{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--ink-soft)}.featured .price small{color:#B9B6A8}.plan ul{list-style:none;padding:0;margin:10px 0 26px;flex:1}.plan li{display:flex;gap:9px;padding:9px 0;border-top:1px solid var(--paper-line);font-size:.92rem}.featured li{border-color:#3A3E50}.check{color:var(--red);font-weight:700}.plan .button{width:100%}
+.studio-section{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}.studio-copy p{color:var(--ink-soft);font-size:1.04rem;margin-top:16px}.language-stamps{display:flex;flex-wrap:wrap;gap:14px}.stamp{border:1.5px solid var(--ink);padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;display:flex;flex-direction:column;gap:2px;transform:rotate(-1.4deg)}.stamp:nth-child(2){transform:rotate(1.1deg)}.stamp:nth-child(3){transform:rotate(-.6deg)}.stamp:nth-child(4){transform:rotate(1.6deg)}.stamp strong{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:.95rem}
+.sample-section{display:grid;grid-template-columns:1fr minmax(320px,.9fr);gap:50px;padding:76px 6vw;background:var(--ink);color:var(--paper)}.sample-section h2{font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.08;margin-bottom:16px}.sample-section p{color:#C9C6B8;max-width:48ch}.sample-section form{display:flex;flex-direction:column;gap:14px}.sample-section label{display:flex;flex-direction:column;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#D8D4C8}.sample-section input,.sample-section select{width:100%;min-height:46px;border:1px solid #4A4E60;border-radius:var(--radius);padding:12px 14px;background:var(--paper);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-size:1rem}.sample-section input::placeholder{color:#8A8878}.sample-section select{appearance:none;background-image:linear-gradient(45deg, transparent 50%, var(--red) 50%),linear-gradient(135deg, var(--red) 50%, transparent 50%);background-position:calc(100% - 20px) 20px,calc(100% - 14px) 20px;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:40px}.honeypot{position:absolute!important;left:-9999px!important;opacity:0!important;height:0!important;width:0!important}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:32px 6vw;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:.78rem}
+.checkout-main{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:70px 6vw}.checkout-card{width:min(760px,100%);background:var(--paper);border:1px solid var(--ink);box-shadow:var(--shadow)}.checkout-card header{padding:26px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.checkout-card .body{padding:30px}.checkout-card h1{font-size:clamp(1.8rem,3vw,2.6rem);line-height:1.05}.checkout-card p{color:var(--ink-soft);margin-top:12px}.checkout-price{font-family:'Fraunces',Georgia,serif;font-size:2.3rem;margin:22px 0}.checkout-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.warning{margin-top:18px;padding:12px 14px;border-left:3px solid var(--red);background:#F0E6D4;color:var(--ink-soft);font-size:.92rem}.success-box{width:min(720px,100%);background:var(--paper);border:1px solid var(--ink);padding:36px;box-shadow:var(--shadow)}
+@media(max-width:900px){.hero,.sample-section,.studio-section{grid-template-columns:1fr}.proof-strip,.pricing-grid,.comparison-grid{grid-template-columns:1fr}.proof,.proof:first-child{padding:24px 6vw;border-right:0;border-bottom:1px solid var(--paper-line)}.site-header nav{display:none}.header-cta{display:none}.rewrite-card{max-width:620px}.lang-switch{top:auto;bottom:16px;right:16px;transform:none;flex-direction:row}.lang-switch button{width:36px}.step{grid-template-columns:76px 1fr}}
+@media(max-width:560px){.hero{padding-top:66px}.hero-actions{flex-direction:column}.button{width:100%}.checkout-card header{flex-direction:column}.checkout-actions{flex-direction:column}.site-header{padding:14px 5vw}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="lang-switch" role="group" aria-label="Seleziona lingua">
+  <button type="button" data-lang="it" class="active">IT</button>
+  <button type="button" data-lang="en">EN</button>
+  <button type="button" data-lang="es">ES</button>
+  <button type="button" data-lang="fr">FR</button>
+</div>
+<header class="site-header"><a class="brand" href="index.html#top">Verba Local <em>Studio</em></a><nav><a href="index.html#pacchetti" data-i18n="back_packages">Pacchetti</a><a href="index.html#prova" data-i18n="free_sample">Prova gratuita</a></nav><a class="button button-primary header-cta" href="index.html" data-i18n="back_home">Torna al sito</a></header>
+<main class="checkout-main">
+  <section class="checkout-card">
+    <header><div><span class="eyebrow" data-i18n="eyebrow">Checkout sicuro</span><h1 id="plan-title">Starter</h1></div><div class="checkout-price" id="plan-price">€75</div></header>
+    <div class="body"><p id="plan-description">Pacchetto essenziale per iniziare.</p><div class="checkout-actions"><a id="pay-link" class="button button-primary" href="#" target="_blank" rel="noopener" data-i18n="pay">Paga con Stripe</a><a class="button button-outline" href="index.html#pacchetti" data-i18n="change_plan">Cambia pacchetto</a></div><div class="warning" id="stripe-warning" data-i18n="warning">Prima di pubblicare davvero il checkout, sostituisci nel file checkout.html i segnaposto con i tuoi link Stripe Payment Links.</div></div>
+  </section>
+</main>
+<script>
+const STRIPE_LINKS = {
+  starter: 'https://buy.stripe.com/test_7sYeVg2vE26idqV3uiabK00',
+  expansion: 'https://buy.stripe.com/test_00w28ufiqdP0gD76GuabK01',
+  ongoing: 'https://buy.stripe.com/test_8x25kG5HQcKW72x1maabK02'
+};
+const dicts = {
+ it: {back_packages:'Pacchetti', free_sample:'Prova gratuita', back_home:'Torna al sito', eyebrow:'Checkout sicuro', pay:'Paga con Stripe', change_plan:'Cambia pacchetto', warning:'Prima di pubblicare davvero il checkout, sostituisci nel file checkout.html i segnaposto con i tuoi link Stripe Payment Links.', plans:{starter:['Primo mercato','€75','Il pacchetto essenziale per validare un nuovo mercato con listing riscritti, ottimizzati e pronti da pubblicare.'], expansion:['Espansione mercato','€320','Una localizzazione completa per portare il catalogo in uno o due nuovi mercati con coerenza e ricerca locale.'], ongoing:['Presenza costante','€180 / mese','Supporto continuativo per nuovi prodotti e aggiornamenti stagionali.']}},
+ en: {back_packages:'Packages', free_sample:'Free sample', back_home:'Back to site', eyebrow:'Secure checkout', pay:'Pay with Stripe', change_plan:'Change package', warning:'Before using the checkout for real, replace the placeholders in checkout.html with your Stripe Payment Links.', plans:{starter:['First market','€75','The essential package to validate a new market with rewritten, optimized listings ready to publish.'], expansion:['Market expansion','€320','Complete localization to bring your catalog into one or two new markets with consistency and local research.'], ongoing:['Continuous presence','€180 / month','Ongoing support for new products and seasonal updates.']}},
+ es: {back_packages:'Paquetes', free_sample:'Prueba gratis', back_home:'Volver al sitio', eyebrow:'Checkout seguro', pay:'Pagar con Stripe', change_plan:'Cambiar paquete', warning:'Antes de usar el checkout de verdad, sustituye los marcadores de checkout.html por tus Stripe Payment Links.', plans:{starter:['Primer mercado','€75','El paquete esencial para validar un nuevo mercado con listings reescritos y optimizados.'], expansion:['Expansión de mercado','€320','Localización completa para llevar el catálogo a uno o dos nuevos mercados.'], ongoing:['Presencia constante','€180 / mes','Soporte continuado para nuevos productos y actualizaciones estacionales.']}},
+ fr: {back_packages:'Formules', free_sample:'Essai gratuit', back_home:'Retour au site', eyebrow:'Checkout sécurisé', pay:'Payer avec Stripe', change_plan:'Changer de formule', warning:'Avant d’utiliser vraiment le checkout, remplacez les espaces réservés de checkout.html par vos Stripe Payment Links.', plans:{starter:['Premier marché','€75','La formule essentielle pour valider un nouveau marché avec des fiches réécrites et optimisées.'], expansion:['Expansion de marché','€320','Localisation complète pour porter le catalogue sur un ou deux nouveaux marchés.'], ongoing:['Présence constante','€180 / mois','Accompagnement continu pour nouveaux produits et mises à jour saisonnières.']}}
+};
+const params = new URLSearchParams(window.location.search); let plan = params.get('plan') || 'starter'; if(!['starter','expansion','ongoing'].includes(plan)) plan = 'starter';
+function applyLang(lang) { const d = dicts[lang] || dicts.it; document.documentElement.lang = lang; document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if(d[k]) el.textContent = d[k]; }); document.querySelectorAll('.lang-switch button').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang)); const p = d.plans[plan]; document.getElementById('plan-title').textContent = p[0]; document.getElementById('plan-price').textContent = p[1]; document.getElementById('plan-description').textContent = p[2]; localStorage.setItem('vls_lang', lang); }
+function setupPayment() { const a = document.getElementById('pay-link'); const w = document.getElementById('stripe-warning'); const link = STRIPE_LINKS[plan]; if(link && link.startsWith('https://buy.stripe.com/')) { a.href = link; a.classList.remove('disabled'); a.setAttribute('aria-disabled','false'); w.style.display = 'none'; } else { a.href = '#'; a.classList.add('disabled'); a.setAttribute('aria-disabled','true'); w.style.display = 'block'; } }
+document.querySelectorAll('.lang-switch button').forEach(btn => btn.addEventListener('click', () => applyLang(btn.dataset.lang)));
+applyLang(localStorage.getItem('vls_lang') || 'it'); setupPayment();
+</script>
+</body>
+</html>

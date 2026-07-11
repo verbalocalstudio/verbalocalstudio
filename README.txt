@@ -1,0 +1,1 @@
+Carica questi file in un repository GitHub Pages. Prima di pubblicare, sostituisci FORM_ID_FORMSPREE_DA_SOSTITUIRE in index.html con il tuo ID Formspree. In checkout.html sostituisci i link Stripe vuoti con i tuoi Payment Links.
