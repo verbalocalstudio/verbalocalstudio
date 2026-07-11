@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<link rel="canonical" href="https://verbalocalstudio.com/">
+<script>
+  // Reindirizza automaticamente a HTTPS quando il sito non è aperto in locale.
+  (function(){
+    var local = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '';
+    if (location.protocol === 'http:' && !local) {
+      location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+    }
+  })();
+</script>
 <title id="page-title">Verba Local Studio — Localizzazione e-commerce</title>
 <meta id="page-desc" name="description" content="Localizzazione e transcreation per negozi Etsy e Shopify in italiano, inglese, spagnolo e francese.">
 <link rel="icon" type="image/png" href="favicon.png">
@@ -51,6 +62,9 @@ main{overflow:hidden}
 }
 .brand{font-family:'Fraunces', Georgia, serif;font-weight:600;font-size:1.15rem;text-decoration:none;white-space:nowrap}
 .brand em{color:var(--red);font-style:italic;font-weight:450}
+.brand-with-logo{display:inline-flex;align-items:center;gap:10px}
+.brand-logo{width:36px;height:36px;object-fit:contain;display:block;border-radius:50%;flex:0 0 auto}
+@media(max-width:640px){.brand-logo{width:32px;height:32px}.brand-with-logo{gap:8px}}
 .site-header nav{display:flex;gap:24px;align-items:center}
 .site-header nav a{text-decoration:none;color:var(--ink-soft);font-size:.94rem;transition:.15s;color:var(--ink-soft)}
 .site-header nav a:hover{color:var(--ink)}
@@ -126,7 +140,10 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
 </div>
 <main>
 <header class="site-header">
-  <a class="brand" href="#top">Verba Local <em>Studio</em></a>
+  <a class="brand brand-with-logo" href="#top">
+    <img src="favicon.png" alt="Logo Verba Local Studio" class="brand-logo">
+    <span>Verba Local <em>Studio</em></span>
+  </a>
   <nav aria-label="Navigazione principale">
     <a href="#processo" data-i18n="nav_process">Come funziona</a>
     <a href="#pacchetti" data-i18n="nav_packages">Pacchetti</a>
