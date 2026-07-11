@@ -117,6 +117,7 @@ main{overflow:hidden}
 .rewrite-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px;border-bottom:1px solid var(--ink);font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
 .rewrite-bar span:last-child{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}.rewrite-bar i{width:6px;height:6px;border-radius:50%;background:var(--teal);display:inline-block}
 .rewrite-body{padding:26px}.micro-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:8px}.original{color:var(--ink-soft);text-decoration:line-through solid var(--red) 1.5px;margin-bottom:20px}.localized{font-family:'Fraunces',Georgia,serif;font-size:1.34rem;line-height:1.25;margin-bottom:14px;min-height:3.3em}.keyword-note{display:inline-block;background:var(--teal-tint);color:var(--teal);font-family:'IBM Plex Mono',monospace;font-size:.72rem;padding:5px 9px}.card-hint{display:block;border-top:1px solid var(--paper-line);padding:10px 16px;color:var(--ink-soft);font-size:.85rem}
+.rewrite-card::after{content:'';position:absolute;left:0;bottom:0;height:3px;width:100%;background:linear-gradient(90deg,var(--red),var(--teal),var(--red));transform-origin:left;animation:rewriteProgress 4.2s linear infinite}.rewrite-card.is-out #rewrite-lang,.rewrite-card.is-out #rewrite-localized,.rewrite-card.is-out #rewrite-note{opacity:0;transform:translateY(10px)}#rewrite-lang,#rewrite-localized,#rewrite-note{transition:opacity .28s ease,transform .28s ease}.rewrite-card.is-in{animation:rewritePop .55s ease}.rewrite-card:hover{box-shadow:0 22px 58px rgba(28,32,50,.18)}@keyframes rewriteProgress{0%{transform:scaleX(0);opacity:.75}88%{transform:scaleX(1);opacity:.75}100%{transform:scaleX(1);opacity:0}}@keyframes rewritePop{0%{transform:translateY(0) scale(1)}45%{transform:translateY(-2px) scale(1.012)}100%{transform:translateY(0) scale(1)}}
 .proof-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--paper-line)}.proof{padding:28px 6vw 28px 28px;border-right:1px solid var(--paper-line)}.proof:first-child{padding-left:6vw}.proof strong{display:block;font-family:'Fraunces',Georgia,serif;font-size:2.1rem;font-weight:450}.proof span{display:block;color:var(--ink-soft);font-size:.92rem;max-width:18ch}
 .content-section{padding:82px 6vw;border-bottom:1px solid var(--paper-line)}.section-intro{max-width:720px;margin-bottom:48px}.section-intro.compact{max-width:790px}.section-intro h2{font-size:clamp(1.75rem,3.5vw,2.55rem);line-height:1.08}.section-intro p{color:var(--ink-soft);font-size:1.05rem;margin-top:14px;max-width:62ch}
 .steps{border-top:1px solid var(--ink)}.step{display:grid;grid-template-columns:100px 1fr;gap:24px;padding:30px 0;border-bottom:1px solid var(--paper-line)}.step-number{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:2.4rem;color:var(--red-dim);line-height:1}.step h3{font-size:1.2rem;margin-bottom:8px}.step p{color:var(--ink-soft);max-width:56ch}.step-time{display:inline-block;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--teal)}
@@ -285,13 +286,55 @@ const translations = {
   }
 };
 let currentVariant = 0;
-function setRewrite(lang) {
+let rewriteTimer = null;
+let isRewriteAnimating = false;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rewriteCard = document.getElementById('rewrite-card');
+const rewriteLangEl = document.getElementById('rewrite-lang');
+const rewriteLocalizedEl = document.getElementById('rewrite-localized');
+const rewriteNoteEl = document.getElementById('rewrite-note');
+
+function getActiveLang(){
+  return localStorage.getItem('vls_lang') || document.documentElement.lang || 'it';
+}
+
+function setRewrite(lang, animated = true) {
   const list = translations[lang].rewrite || translations.it.rewrite;
   currentVariant = currentVariant % list.length;
-  document.getElementById('rewrite-lang').textContent = list[currentVariant].lang;
-  document.getElementById('rewrite-localized').textContent = list[currentVariant].final;
-  document.getElementById('rewrite-note').textContent = list[currentVariant].note;
+  const item = list[currentVariant];
+
+  const updateContent = () => {
+    rewriteLangEl.textContent = item.lang;
+    rewriteLocalizedEl.textContent = item.final;
+    rewriteNoteEl.textContent = item.note;
+    rewriteCard.classList.remove('is-out');
+    rewriteCard.classList.add('is-in');
+    window.setTimeout(() => rewriteCard.classList.remove('is-in'), 560);
+    isRewriteAnimating = false;
+  };
+
+  if (animated && !reduceMotion) {
+    if (isRewriteAnimating) return;
+    isRewriteAnimating = true;
+    rewriteCard.classList.add('is-out');
+    window.setTimeout(updateContent, 260);
+  } else {
+    updateContent();
+  }
 }
+
+function nextRewrite(){
+  const lang = getActiveLang();
+  const list = translations[lang].rewrite || translations.it.rewrite;
+  currentVariant = (currentVariant + 1) % list.length;
+  setRewrite(lang, true);
+}
+
+function restartRewriteAuto(){
+  if (rewriteTimer) window.clearInterval(rewriteTimer);
+  if (!reduceMotion) rewriteTimer = window.setInterval(nextRewrite, 4200);
+}
+
 function applyLang(lang) {
   const dict = translations[lang] || translations.it;
   document.documentElement.setAttribute('lang', lang);
@@ -302,11 +345,15 @@ function applyLang(lang) {
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const k = el.getAttribute('data-i18n-placeholder'); if(dict[k] !== undefined) el.setAttribute('placeholder', dict[k]); });
   document.querySelectorAll('.lang-switch button').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
   localStorage.setItem('vls_lang', lang);
-  setRewrite(lang);
+  setRewrite(lang, true);
+  restartRewriteAuto();
 }
+
 document.querySelectorAll('.lang-switch button').forEach(btn => btn.addEventListener('click', () => applyLang(btn.dataset.lang)));
-document.getElementById('rewrite-card').addEventListener('click', () => { const lang = localStorage.getItem('vls_lang') || document.documentElement.lang || 'it'; const list = translations[lang].rewrite || translations.it.rewrite; currentVariant = (currentVariant + 1) % list.length; setRewrite(lang); });
-applyLang(localStorage.getItem('vls_lang') || 'it');
-</script>
+rewriteCard.addEventListener('click', () => {
+  nextRewrite();
+  restartRewriteAuto();
+});
+applyLang(localStorage.getItem('vls_lang') || 'it');</script>
 </body>
 </html>
